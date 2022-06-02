@@ -62,7 +62,7 @@ class Classifier(nn.Module):
 
 class Completer(nn.Module):
     def __init__(self, opt):
-        super(Classifier, self).__init__()
+        super(Completer, self).__init__()
         self.opt = opt
         self.dim = opt['hidden_dim']
         self.num_labels = opt['number_label']

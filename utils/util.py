@@ -25,13 +25,18 @@ def preprocess(root='dataset', train='train.csv', val_cls='validation_classifica
 
     print('Construction Dict: Train')
     food_prefix = 'train'
+
     with open(os.path.join(root, train), 'r') as f:
         lines = f.readlines()
+
     for i, line in enumerate(lines):
+        tokens = line.strip().split(',')
+        food_score = len(tokens) - 1
+        if food_score <= 20:
+            continue
         food_key = food_prefix + '-' + f'{i}'
         # print(f'{food_key}')
         food_dict[food_key] = food_dict.get(food_key, len(food_dict))
-        tokens = line.strip().split(',')
         for ing in tokens[:-1]:
             ing_dict[ing] = ing_dict.get(ing, len(ing_dict))
         label_key = tokens[-1]
@@ -59,27 +64,27 @@ def preprocess(root='dataset', train='train.csv', val_cls='validation_classifica
         for ing in tokens:
             ing_dict[ing] = ing_dict.get(ing, len(ing_dict))
 
-    print('Construction Dict: Val Comp')
-    food_prefix = 'val_comp'
-    with open(os.path.join(root, val_comp), 'r') as f:
-        lines = f.readlines()
-    for i, line in enumerate(lines):
-        food_key = food_prefix + '-' + f'{i}'
-        food_dict[food_key] = food_dict.get(food_key, len(food_dict))
-        tokens = line.strip().split(',')
-        for ing in tokens:
-            ing_dict[ing] = ing_dict.get(ing, len(ing_dict))
+    # print('Construction Dict: Val Comp')
+    # food_prefix = 'val_comp'
+    # with open(os.path.join(root, val_comp), 'r') as f:
+    #     lines = f.readlines()
+    # for i, line in enumerate(lines):
+    #     food_key = food_prefix + '-' + f'{i}'
+    #     food_dict[food_key] = food_dict.get(food_key, len(food_dict))
+    #     tokens = line.strip().split(',')
+    #     for ing in tokens:
+    #         ing_dict[ing] = ing_dict.get(ing, len(ing_dict))
 
-    print('Construction Dict: Test Comp')
-    food_prefix = 'test_comp'
-    with open(os.path.join(root, test_comp), 'r') as f:
-        lines = f.readlines()
-    for i, line in enumerate(lines):
-        food_key = food_prefix + '-' + f'{i}'
-        food_dict[food_key] = food_dict.get(food_key, len(food_dict))
-        tokens = line.strip().split(',')
-        for ing in tokens:
-            ing_dict[ing] = ing_dict.get(ing, len(ing_dict))
+    # print('Construction Dict: Test Comp')
+    # food_prefix = 'test_comp'
+    # with open(os.path.join(root, test_comp), 'r') as f:
+    #     lines = f.readlines()
+    # for i, line in enumerate(lines):
+    #     food_key = food_prefix + '-' + f'{i}'
+    #     food_dict[food_key] = food_dict.get(food_key, len(food_dict))
+    #     tokens = line.strip().split(',')
+    #     for ing in tokens:
+    #         ing_dict[ing] = ing_dict.get(ing, len(ing_dict))
 
     print('Completed: Disctionary Construction')
     print(f'Food_items: {len(food_dict)}')
@@ -93,9 +98,11 @@ def preprocess(root='dataset', train='train.csv', val_cls='validation_classifica
     with open(os.path.join(root, train), 'r') as f:
         lines = f.readlines()
     for i, line in enumerate(lines):
-        food_key = food_prefix + '-' + f'{i}'
-        food_idx = food_dict[food_key]
         tokens = line.strip().split(',')
+        food_key = food_prefix + '-' + f'{i}'
+        if not food_key in food_dict:
+            continue
+        food_idx = food_dict[food_key]
         ings = []
         for ing in tokens[:-1]:
             ing_idx = ing_dict[ing]
@@ -139,41 +146,41 @@ def preprocess(root='dataset', train='train.csv', val_cls='validation_classifica
             edges.append([food_idx, ing_idx])
         cls_test.append(food_idx)
 
-    print('Construction Files: Val Comp')
-    food_prefix = 'val_comp'
-    with open(os.path.join(root, val_comp), 'r') as f:
-        lines = f.readlines()
-    with open(os.path.join(root, val_comp_ans), 'r') as f:
-        lines_ans = f.readlines()
+    # print('Construction Files: Val Comp')
+    # food_prefix = 'val_comp'
+    # with open(os.path.join(root, val_comp), 'r') as f:
+    #     lines = f.readlines()
+    # with open(os.path.join(root, val_comp_ans), 'r') as f:
+    #     lines_ans = f.readlines()
 
-    for i, line_ans in enumerate(zip(lines, lines_ans)):
-        line, ans = line_ans
-        food_key = food_prefix + '-' + f'{i}'
-        food_idx = food_dict[food_key]
-        ings = []
-        tokens = line.strip().split(',')
-        for ing in tokens:
-            ing_idx = ing_dict[ing]
-            edges.append([food_idx, ing_idx])
-            ings.append(ing_idx)       
-        ans_idx = ing_dict[ans.strip()]
-        comp_val.append([food_idx, ings, ans_idx])
+    # for i, line_ans in enumerate(zip(lines, lines_ans)):
+    #     line, ans = line_ans
+    #     food_key = food_prefix + '-' + f'{i}'
+    #     food_idx = food_dict[food_key]
+    #     ings = []
+    #     tokens = line.strip().split(',')
+    #     for ing in tokens:
+    #         ing_idx = ing_dict[ing]
+    #         edges.append([food_idx, ing_idx])
+    #         ings.append(ing_idx)       
+    #     ans_idx = ing_dict[ans.strip()]
+    #     comp_val.append([food_idx, ings, ans_idx])
     
-    print('Construction Files: Test Comp')
-    food_prefix = 'test_comp'
-    with open(os.path.join(root, test_comp), 'r') as f:
-        lines = f.readlines()
+    # print('Construction Files: Test Comp')
+    # food_prefix = 'test_comp'
+    # with open(os.path.join(root, test_comp), 'r') as f:
+    #     lines = f.readlines()
 
-    for i, line in enumerate(lines):
-        food_key = food_prefix + '-' + f'{i}'
-        food_idx = food_dict[food_key]
-        ings = []
-        tokens = line.strip().split(',')
-        for ing in tokens:
-            ing_idx = ing_dict[ing]
-            edges.append([food_idx, ing_idx])
-            ings.append(ing_idx)       
-        comp_test.append([food_idx, ings])
+    # for i, line in enumerate(lines):
+    #     food_key = food_prefix + '-' + f'{i}'
+    #     food_idx = food_dict[food_key]
+    #     ings = []
+    #     tokens = line.strip().split(',')
+    #     for ing in tokens:
+    #         ing_idx = ing_dict[ing]
+    #         edges.append([food_idx, ing_idx])
+    #         ings.append(ing_idx)       
+    #     comp_test.append([food_idx, ings])
 
     print('Completed: File Construction')
     print(f'Edge Items: {len(edges)}')
@@ -181,8 +188,8 @@ def preprocess(root='dataset', train='train.csv', val_cls='validation_classifica
     print(f'Cls Val Items: {len(cls_val)}')
     print(f'Cls Test Items: {len(cls_test)}')
     print(f'Comp Train Items: {len(comp_train)}')
-    print(f'Comp Val Items: {len(comp_val)}')
-    print(f'Comp Test Items: {len(comp_test)}')
+    # print(f'Comp Val Items: {len(comp_val)}')
+    # print(f'Comp Test Items: {len(comp_test)}')
     print(f'Val Cls Items: {len(val_cls)}')
     
     # save to file
@@ -191,8 +198,8 @@ def preprocess(root='dataset', train='train.csv', val_cls='validation_classifica
     torch.save(cls_val, os.path.join(root, 'cls_val.pt'))
     torch.save(cls_test, os.path.join(root, 'cls_test.pt'))
     torch.save(comp_train, os.path.join(root, 'comp_train.pt'))
-    torch.save(comp_val, os.path.join(root, 'comp_val.pt'))
-    torch.save(comp_test, os.path.join(root, 'comp_test.pt'))
+    # torch.save(comp_val, os.path.join(root, 'comp_val.pt'))
+    # torch.save(comp_test, os.path.join(root, 'comp_test.pt'))
     torch.save(edges, os.path.join(root, 'edges.pt'))
     torch.save(food_dict, os.path.join(root, 'food_dict.pt'))
     torch.save(ing_dict, os.path.join(root, 'ingredient_dict.pt'))

@@ -52,7 +52,7 @@ class DGILTrainer(Trainer):
             self.criterion.cuda()
         self.optimizer = torch_utils.get_optimizer(opt['optim'], self.model.parameters(), opt['lr'])
         self.optimizer_cls = torch_utils.get_optimizer(opt['optim'], self.classifier.parameters(), opt['lr_cls'])
-        self.optimizer_comp = torch_utils.get_optimizer(opt['optim'], self.completere.parameters(), opt['lr_comp'])
+        self.optimizer_comp = torch_utils.get_optimizer(opt['optim'], self.completer.parameters(), opt['lr_comp'])
 
         self.epoch_rec_loss = []
         self.epoch_dgi_loss = []

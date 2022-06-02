@@ -32,6 +32,7 @@ parser.add_argument('--sparse', action='store_true', default=False, help='GNN wi
 parser.add_argument('--GNN', type=int, default=2, help="The layer of encoder.")
 parser.add_argument('--feature_dim', type=int, default=128, help='Initialize network embedding dimension.')
 parser.add_argument('--hidden_dim', type=int, default=128, help='GNN network hidden embedding dimension.')
+parser.add_argument('--number_label', type=int, default=20, help='GNN network hidden embedding dimension.')
 parser.add_argument('--dropout', type=float, default=0.3, help='GNN layer dropout rate.')
 parser.add_argument('--optim', choices=['sgd', 'adagrad', 'adam', 'adamax'], default='adam',
                     help='Optimizer: sgd, adagrad, adam or adamax.')
@@ -55,7 +56,7 @@ parser.add_argument('--struct_rate', type=float, default=0.0001)
 parser.add_argument('--early_stop', type=int, default=20)
 # train part
 parser.add_argument('--num_epoch', type=int, default=100, help='Number of total training epochs.')
-parser.add_argument('--min_neighbor', type=int, default=5, help='Number of max neighbor per node')
+parser.add_argument('--min_neighbor', type=int, default=10, help='Number of max neighbor per node')
 parser.add_argument('--batch_size', type=int, default=128, help='Training batch size.')
 parser.add_argument('--log_step', type=int, default=200, help='Print log every k steps.')
 parser.add_argument('--log', type=str, default='logs.txt', help='Write training log to file.')
@@ -143,14 +144,14 @@ train_batch = wikiDataLoader(opt['data_dir'] + 'edges.txt', opt['batch_size'], o
 # graph = load_graph()
 cls_train_dataset = ClsDataset('dataset', split='train')
 cls_dev_dataset = ClsDataset('dataset', split='val')
-comp_train_dataset = CompDataset('dataset', split='train')
-comp_dev_dataset = CompDataset('dataset', split='val')
+# comp_train_dataset = CompDataset('dataset', split='train')
+# comp_dev_dataset = CompDataset('dataset', split='val')
 
 def cls_collate_fn(samples):
     food = [sample['food'] for sample in samples]
     ans = [sample['ans'] for sample in samples]
-    return {'food': torch.tensor(food).cuda(),
-            'label': torch.tensor(ans).cuda()}
+    return {'food': torch.tensor(food),
+            'label': torch.tensor(ans)}
 
 def cmp_collate_fn(samples):
     food = [sample['food'] for sample in samples]
@@ -167,8 +168,8 @@ def cmp_collate_fn(samples):
 
 cls_train_loader = torch.utils.data.DataLoader(cls_train_dataset, batch_size=len(cls_train_dataset), collate_fn=cls_collate_fn)
 cls_dev_loader = torch.utils.data.DataLoader(cls_dev_dataset, batch_size=len(cls_dev_dataset), collate_fn=cls_collate_fn)
-comp_train_loader = torch.utils.data.DataLoader(comp_train_dataset, batch_size=len(comp_train_dataset), collate_fn=cmp_collate_fn)
-comp_dev_loader = torch.utils.data.DataLoader(comp_dev_dataset, batch_size=len(comp_dev_dataset), collate_fn=cmp_collate_fn)
+# comp_train_loader = torch.utils.data.DataLoader(comp_train_dataset, batch_size=len(comp_train_dataset), collate_fn=cmp_collate_fn)
+# comp_dev_loader = torch.utils.data.DataLoader(comp_dev_dataset, batch_size=len(comp_dev_dataset), collate_fn=cmp_collate_fn)
 
 # model
 if not opt['load']:
@@ -257,14 +258,14 @@ for epoch in range(1, opt['num_epoch'] + 1):
         loss_cls = trainer.classify(batch)
         train_loss += loss_cls
 
-    for i, batch in enumerate(tqdm(comp_train_loader)):
-        # global_step += 1
-        # loss = 0
-        # loss = trainer.reconstruct(UV, VU, adj,corruption_UV, corruption_VU, fake_adj, user_feature, item_feature, batch)  # [ [user_list], [item_list], [neg_item_list] ]
-        # train_loss += loss
+    # for i, batch in enumerate(tqdm(comp_train_loader)):
+    #     # global_step += 1
+    #     # loss = 0
+    #     # loss = trainer.reconstruct(UV, VU, adj,corruption_UV, corruption_VU, fake_adj, user_feature, item_feature, batch)  # [ [user_list], [item_list], [neg_item_list] ]
+    #     # train_loss += loss
 
-        loss_comp = trainer.complete(batch)
-        train_loss += loss_comp
+    #     loss_comp = trainer.complete(batch)
+    #     train_loss += loss_comp
 
     duration = time.time() - start_time
     print(format_str.format(datetime.now(), global_step, max_steps, epoch, \
@@ -273,7 +274,7 @@ for epoch in range(1, opt['num_epoch'] + 1):
     print("batch_rec_loss: ", sum(trainer.epoch_rec_loss) / len(trainer.epoch_rec_loss))
     print("batch_dgi_loss: ", sum(trainer.epoch_dgi_loss) / len(trainer.epoch_dgi_loss))
     print("batch_cls_loss: ", sum(trainer.epoch_cls_loss) / len(trainer.epoch_cls_loss))
-    print("batch_comp_loss: ", sum(trainer.epoch_comp_loss) / len(trainer.epoch_comp_loss))
+    # print("batch_comp_loss: ", sum(trainer.epoch_comp_loss) / len(trainer.epoch_comp_loss))
 
     trainer.epoch_rec_loss = []
     trainer.epoch_dgi_loss = []
