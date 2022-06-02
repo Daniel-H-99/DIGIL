@@ -1,0 +1,57 @@
+numbers: 5859, 23547
+real graph loaded!
+corruption_edges:  13797
+fake graph loaded!
+graph loaded!
+Config saved to file ./saved_models/baseline/config.json
+
+Running with the following configs:
+	data_dir : ../data/
+	weight : False
+	sparse : False
+	GNN : 2
+	feature_dim : 128
+	hidden_dim : 128
+	dropout : 0.3
+	optim : adam
+	lr : 0.001
+	lr_decay : 0.9
+	weight_decay : 0.0005
+	decay_epoch : 5
+	max_grad_norm : 5.0
+	leakey : 0.1
+	cpu : False
+	cuda : True
+	margin : 0.3
+	lambda : 0.1
+	DGI : False
+	attention : True
+	struct : True
+	struct_rate : 0.0001
+	early_stop : 20
+	num_epoch : 100
+	min_neighbor : 1
+	batch_size : 128
+	log_step : 200
+	log : logs.txt
+	save_epoch : 100
+	save_dir : ./saved_models
+	id : baseline
+	topn : 10
+	seed : 2040
+	load : False
+	model_file : None
+	info : 
+	negative : 1
+	save_node_feature : False
+	wiki : True
+	number_user : 5859
+	number_item : 23547
+	model_save_dir : ./saved_models/baseline
+
+
+Loading data from ../data/ with batch size 128...
+1882 batches created for ../data/train.txt
+1 batches created for ../data/test.txt
+train set: 481792
+test set: 12672

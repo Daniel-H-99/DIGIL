@@ -1,0 +1,8 @@
+.ipynb_checkpoints/
+__pycache__/
+ckpt/
+data/cora/.ipynb_checkpoints/
+results/
+saved_models/
+*.zip
+run.sh
